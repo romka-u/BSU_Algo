@@ -1276,5 +1276,334 @@ int main() {
     return 0;
 }
 \end{cppcode}
+\section{Суффиксное дерево}
+\begin{cppcode}
+struct SuffixTree {
+    string str;
+    int numberOfNodes;
 
+    struct Node {
+        int left, right;
+        int parent, link;
+        std:: map<char, int> next;
+
+        Node(int _left = 0, int _right = 0, int _parent = -1) : left(_left), 
+                                right(_right), parent(_parent), link(-1) {}
+
+        int lengthOfEdge() {
+            return right - left;  
+        }
+        
+        int& get(char ch) {
+            if (!next.count(ch))
+                next[ch] = -1;
+            return next[ch];
+        }    
+    };    
+
+    struct State {
+        int node, position;
+        State(int _node = 0, int _position = 0) : node(_node), position(_position) {}
+    };
+    State curState;
+    vector<Node> nodes;
+
+    State skipCount(State state, int left, int right) {
+        while (left < right) {
+            if (state.position == nodes[state.node].lengthOfEdge()) {
+                state = State(nodes[state.node].get(str[left]), 0);
+                if (state.node == -1)
+                    return state;
+            }
+            else {
+                if (str[nodes[state.node].left + state.position] != str[left])
+                    return State(-1, -1);
+                if (right - left < nodes[state.node].lengthOfEdge() - state.position)
+                    return State(state.node, state.position + right - left);
+                left += nodes[state.node].lengthOfEdge() - state.position;
+                state.position = nodes[state.node].lengthOfEdge();
+            }
+        }
+        return state;
+    }
+
+    int splitEdgeInPos(State state) {
+        if (state.position == nodes[state.node].lengthOfEdge())
+            return state.node;
+        if (state.position == 0)
+            return nodes[state.node].parent;
+
+        Node end = nodes[state.node];
+        int cur = numberOfNodes++;
+        nodes[cur] = Node(end.left, end.left + state.position, end.parent);
+        nodes[end.parent].get(str[end.left]) = cur;
+        nodes[cur].get(str[end.left + state.position]) = state.node;
+        nodes[state.node].parent = cur;
+        nodes[state.node].left += state.position;
+        return cur;
+    }    
+
+    int getLink (int node) {
+        if (nodes[node].link != -1)
+            return nodes[node].link;
+        if (nodes[node].parent == -1)
+            return 0;
+        int parent_link = getLink(nodes[node].parent);
+        nodes[node].link = splitEdgeInPos(skipCount(State(parent_link,  
+                                    nodes[parent_link].lengthOfEdge()), 
+                                    nodes[node].left + (nodes[node].parent == 0), 
+                                    nodes[node].right));
+        return nodes[node].link;
+    }
+     
+    void addNewChar (int position) {
+        bool isEnd = false;
+        while (!isEnd) {
+            State nextState = skipCount(curState, position, position + 1);
+            if (nextState.node != -1) {
+                curState = nextState;
+                return;
+            }
+
+            int mid = splitEdgeInPos(curState);
+            nodes[numberOfNodes] = Node(position, str.length(), mid);
+            nodes[mid].get(str[position]) = numberOfNodes;
+            ++numberOfNodes;
+     
+            curState.node = getLink(mid);
+            curState.position = nodes[curState.node].lengthOfEdge();
+            if (!mid)
+                isEnd = true;
+        }
+    }
+
+    explicit SuffixTree(const string& _str) : str(_str) {
+        nodes = vector<Node> (str.length() * 2 + 1);
+        numberOfNodes = 1;
+        for (size_t i = 0; i < str.length(); ++i) {
+            addNewChar(i);
+        }
+    }    
+};
+\end{cppcode}
+
+\section{Суффиксный массив}
+\begin{cppcode}
+const int maxn = 100010;
+
+#define forn( i,n ) for ( int i=0; i<(int)(n); i++ )
+
+char s[maxn];
+int p[maxn], pn[maxn], c[18][maxn], cc, mh, cnt[maxn];
+
+int lcp( int i1, int i2 )
+{
+  int res = 0;
+  for ( int i=mh; i>=0; i-- )
+                 if ( c[i][i1+res] == c[i][i2+res] )
+                   res += 1 << i;
+  return res;
+}          
+
+int main()
+{
+  gets( s );
+  int n = strlen( s );
+  s[n++] = 1;
+  s[n] = 0;
+
+  forn( i,n ) cnt[ s[i] ]++;
+  forn( i, 256 ) cnt[i+1] += cnt[i];
+  for ( int i=n-1; i>=0; i-- ) p[ --cnt[ s[i] ] ] = i;
+
+  int cc = 1;
+  c[0][ p[0] ] = 0;
+  forn( i,n-1 ) c[0][ p[i+1] ] = ( cc += s[ p[i] ] != s[ p[i+1] ] ) - 1;
+
+  for ( int jj=1, h=1; jj < n; jj<<=1, h++ )
+  {                        
+    forn( i,n )
+    {
+      pn[i] = p[i] - jj;
+      if ( pn[i] < 0 ) pn[i] += n;
+    }
+
+    memset( cnt, 0, sizeof(cnt) );
+    forn( i, n ) cnt[ c[h-1][ pn[i] ] ]++;
+    forn( i, cc ) cnt[i+1] += cnt[i];
+    for ( int i=n-1; i>=0; i-- )
+	p[ --cnt[ c[h-1][ pn[i] ] ] ] = pn[i];
+
+	cc = 1;
+	c[ 0 ][ p[0] ] = 0;
+     
+ 	forn( i, n-1 )
+ 	{
+ 	  int i1 = p[i] + jj, i2 = p[i+1] + jj;
+ 	  if ( i1 >= n ) i1 -= n;
+ 	  if ( i2 >= n ) i2 -= n;
+ 	  c[h][ p[i+1] ] = ( cc += c[h-1][p[i]] != c[h-1][p[i+1]] || c[h-1][i1] != c[h-1][i2] ) - 1;
+ 	}
+
+ 	mh = h;
+  }
+
+  for ( int i=1; i<n; i++ ) printf( "%d\n", p[i]+1 );
+  return 0;
+
+  forn( i,n )
+  {
+    puts( s + p[i] );
+    if ( i )
+    printf( "lcp %d %d - %d\n", p[i-1], p[i], lcp( p[i-1], p[i] ) );
+  }
+}
+\end{cppcode}
+
+\section{Суффиксный автомат}
+\begin{cppcode}
+struct state {
+	int len, link;
+	map<char,int> next;
+};
+const int MAXLEN = 100000;
+state st[MAXLEN*2];
+int sz, last;
+
+void sa_init() {
+	sz = last = 0;
+	st[0].len = 0;
+	st[0].link = -1;
+	++sz;
+	/*
+	// этот код нужен, только если автомат строится много раз для разных строк:
+	for (int i=0; i<MAXLEN*2; ++i)
+		st[i].next.clear();
+	*/
+}
+
+void sa_extend (char c) {
+	int cur = sz++;
+	st[cur].len = st[last].len + 1;
+	int p;
+	for (p=last; p!=-1 && !st[p].next.count(c); p=st[p].link)
+		st[p].next[c] = cur;
+	if (p == -1)
+		st[cur].link = 0;
+	else {
+		int q = st[p].next[c];
+		if (st[p].len + 1 == st[q].len)
+			st[cur].link = q;
+		else {
+			int clone = sz++;
+			st[clone].len = st[p].len + 1;
+			st[clone].next = st[q].next;
+			st[clone].link = st[q].link;
+			for (; p!=-1 && st[p].next[c]==q; p=st[p].link)
+				st[p].next[c] = clone;
+			st[q].link = st[cur].link = clone;
+		}
+	}
+	last = cur;
+}
+\end{cppcode}
+
+\section{2-SAT}
+\begin{cppcode}
+int n;
+vector < vector<int> > g, gt;
+vector<bool> used;
+vector<int> order, comp;
+
+void dfs1 (int v) {
+               used[v] = true;
+	for (size_t i=0; i<g[v].size(); ++i) {
+		int to = g[v][i];
+		if (!used[to])
+			dfs1 (to);
+	}
+	order.push_back (v);
+}
+
+void dfs2 (int v, int cl) {
+	comp[v] = cl;
+	for (size_t i=0; i<gt[v].size(); ++i) {
+		int to = gt[v][i];
+		if (comp[to] == -1)
+			dfs2 (to, cl);
+	}
+}
+
+int main() {
+               ...
+	used.assign (n, false);
+	for (int i=0; i<n; ++i)
+		if (!used[i])
+			dfs1 (i);
+
+	comp.assign (n, -1);
+	for (int i=0, j=0; i<n; ++i) {
+		int v = order[n-i-1];
+		if (comp[v] == -1)
+			dfs2 (v, j++);
+	}
+
+	for (int i=0; i<n; ++i)
+		if (comp[i] == comp[i^1]) {
+			puts ("NO SOLUTION");
+			return 0;
+		}
+	for (int i=0; i<n; ++i) {
+		int ans = comp[i] > comp[i^1] ? i : i^1;
+		printf ("%d ", ans);
+	}
+
+}
+\end{cppcode}
+
+
+\section{SimplexMethod}
+\begin{cppcode}
+// max{cx | Ax <= b, x >= 0}
+const double kEps = 1e-8;
+vector<double> SimplexMethod(vector<vector<double>> A, vector<double> b, vector<double> c) {
+               int n = A.size(), m = A[0].size() + 1, r = n, s = m - 1;
+	vector<vector<double>> D = vector<vector<double>>(n + 2, vector<double>(m + 1));
+	vector<int> ix(n + m);
+	for (int i = 0; i < n + m; i++) ix[i] = i;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m - 1; j++) D[i][j] = -A[i][j];
+		D[i][m - 1] = 1;
+		D[i][m] = b[i];
+		if (D[r][m] > D[i][m]) r = i;
+	}
+	for (int j = 0; j < m - 1; j++) D[n][j] = c[j];
+	D[n + 1][m - 1] = -1;
+	for (double d;;) {
+		if (r < n) {
+			int t = ix[s]; ix[s] = ix[r + m]; ix[r + m] = t;
+			D[r][s] = 1.0 / D[r][s];
+			for (int j = 0; j <= m; j++) if (j != s) D[r][j] *= -D[r][s];
+			for (int i = 0; i <= n + 1; i++) if (i != r) {
+				for (int j = 0; j <= m; j++) if (j != s) D[i][j] += D[r][j] * D[i][s];
+				D[i][s] *= D[r][s];
+			}
+		}
+		r = -1; s = -1;
+		for (int j = 0; j < m; j++) if (s < 0 || ix[s] > ix[j]) {
+			if (D[n + 1][j] > kEps || D[n + 1][j] > -kEps && D[n][j] > kEps) s = j;
+		}
+		if (s < 0) break;
+		for (int i = 0; i < n; i++) if (D[i][s] < -kEps) {
+			if (r < 0 || (d = D[r][m] / D[r][s] - D[i][m] / D[i][s]) < -kEps
+				|| d < kEps && ix[r + m] > ix[i + m]) r = i;
+		}
+		if (r < 0) return vector<double>();
+	}
+	if (D[n + 1][m] < -kEps) return vector<double>();
+	vector<double> x = vector<double>(m - 1);
+	for (int i = m; i < n + m; i++) if (ix[i] < m - 1) x[ix[i]] = D[i - m][m];
+	return x;
+}
+\end{cppcode}
 \end{document}

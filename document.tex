@@ -34,35 +34,23 @@
 
 {\color{linescolor}\hrule\vskip2mm}
 {\footnotesize\begin{verbatim}
-map <F1> <ESC><CR>
-
-set nocp
 set mouse=a
-
-map <F2> :w<CR>
-map <F5> :!for tst in `ls \| grep ^in`; do echo $tst; cat $tst;
-    echo '---------'; time ./%:r <$tst; read; done<CR> 
-map <F6> :cprev<CR>
-map <F7> :cc<CR>
-map <F8> :cnext<CR>
-map <F9> :set makeprg=g++\ -Wno-unused-result\ -o\ %:r\ -DLOCAL\ -O2\ -Wall\ %<CR>
-    :wa<CR> :make<CR>
-map <F10> :set makeprg=g++\ -Wno-unused-result\ -o\ %:r\ -DLOCAL\ -DBRUTE\ -DDEBUG\
-    -Wall\ %<CR> :wa<CR> :make<CR>
-
-set wildmenu
-set number
-set splitright
-
-set cindent
+set tabstop=4
 set shiftwidth=4
 set expandtab
 set smarttab
-
+set smartindent
+set splitright
 set showcmd
+syntax on
 
-map <PageUp> <C-U>
-map <PageDown> <C-D> 
+set makeprg=g++\ -O2\ -Wall\ -Wno-unused-result\ -o\ %:r\ %
+map <C-B> :w<CR>:make<CR>
+imap <C-B> <ESC>:w<CR>:make<CR>
+
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
 \end{verbatim}
 }{\vskip2mm\color{linescolor}\hrule}
 

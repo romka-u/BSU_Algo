@@ -1,0 +1,1326 @@
+\documentclass[12pt, titlepage]{article} 
+
+% Compile with XeLaTeX, encoding: UTF-8
+
+\renewcommand{\tt}[1]{\texttt{\small #1}}
+\usepackage{package}
+\usepackage{fontspec}% provides font selecting commands
+\usepackage{xunicode}% provides unicode character macros
+\renewcommand{\theFancyVerbLine}{\rmfamily\scriptsize\arabic{FancyVerbLine}}
+
+\newminted{cpp}{mathescape,
+               linenos,
+               numbersep=7pt,
+               frame=lines,
+               framesep=2mm,
+             rulecolor=\color{linescolor},
+             fontsize=\footnotesize}
+
+
+\begin{document} 
+\begin{titlepage}
+\rule{0pt}{0pt}
+\vfill
+
+\centerline{\Huge \textrm{Belarusian State University}}
+\vskip 5mm
+\centerline{\Large \textsf{Team Reference Document}}
+
+\vfill
+\rule{0pt}{0pt}
+\end{titlepage}
+
+\section*{.vimrc}
+
+{\color{linescolor}\hrule\vskip2mm}
+{\footnotesize\begin{verbatim}
+map <F1> <ESC><CR>
+
+set nocp
+set mouse=a
+
+map <F2> :w<CR>
+map <F5> :!for tst in `ls \| grep ^in`; do echo $tst; cat $tst;
+    echo '---------'; time ./%:r <$tst; read; done<CR> 
+map <F6> :cprev<CR>
+map <F7> :cc<CR>
+map <F8> :cnext<CR>
+map <F9> :set makeprg=g++\ -Wno-unused-result\ -o\ %:r\ -DLOCAL\ -O2\ -Wall\ %<CR>
+    :wa<CR> :make<CR>
+map <F10> :set makeprg=g++\ -Wno-unused-result\ -o\ %:r\ -DLOCAL\ -DBRUTE\ -DDEBUG\
+    -Wall\ %<CR> :wa<CR> :make<CR>
+
+set wildmenu
+set number
+set splitright
+
+set cindent
+set shiftwidth=4
+set expandtab
+set smarttab
+
+set showcmd
+
+map <PageUp> <C-U>
+map <PageDown> <C-D> 
+\end{verbatim}
+}{\vskip2mm\color{linescolor}\hrule}
+
+\newpage\section*{template.cpp}
+\begin{cppcode}
+#ifdef DEBUG
+//#define _GLIBCXX_DEBUG
+#endif
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <vector>
+#include <set>
+#include <map>
+#include <queue>
+#include <deque>
+#include <string>
+#include <cstring>
+#include <sstream>
+#include <cmath>
+#include <algorithm>
+#include <ctime>
+#include <cassert>
+#include <functional>
+#include <complex>
+
+using namespace std;
+typedef long double LD;
+typedef long long LL;
+
+int main()
+{
+    return 0;
+}
+\end{cppcode}
+
+\newpage\tableofcontents
+
+\section{Rounding Functions}
+
+You can also convert floating-point numbers to integers simply by casting them to \tt{int}. This discards the fractional part, effectively rounding towards zero. However, this only works if the result can actually be represented as an int—for very large numbers, this is impossible. The functions listed here return the result as a double instead to get around this problem.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+double ceil (double x)
+float ceilf (float x)
+long double ceill (long double x)
+\end{minted}
+These functions round \tt{x} upwards to the nearest integer, returning that value as a double. Thus, \tt{ceil (1.5)} is \tt{2.0}.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+double floor (double x)
+float floorf (float x)
+long double floorl (long double x)
+\end{minted}
+These functions round \tt{x} downwards to the nearest integer, returning that value as a double. Thus, \tt{floor (1.5)} is \tt{1.0} and \tt{floor (-1.5)} is \tt{-2.0}.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+double trunc (double x)
+float truncf (float x)
+long double truncl (long double x)
+\end{minted}
+The \tt{trunc} functions round \tt{x} towards zero to the nearest integer (returned in floating-point format). Thus, \tt{trunc (1.5)} is \tt{1.0} and \tt{trunc (-1.5)} is \tt{-1.0}.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+double rint (double x)
+float rintf (float x)
+long double rintl (long double x)
+\end{minted}
+These functions round \tt{x} to an integer value according to the current rounding mode. See Floating Point Parameters, for information about the various rounding modes. The default rounding mode is to round to the nearest integer; some machines support other modes, but round-to-nearest is always used unless you explicitly select another. If \tt{x} was not initially an integer, these functions raise the inexact exception.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+double nearbyint (double x)
+float nearbyintf (float x)
+long double nearbyintl (long double x)
+\end{minted}
+These functions return the same value as the \tt{rint} functions, but do not raise the inexact exception if \tt{x} is not an integer.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+double round (double x)
+float roundf (float x)
+long double roundl (long double x)
+\end{minted}
+These functions are similar to \tt{rint}, but they round halfway cases away from zero instead of to the nearest integer (or other current rounding mode).
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+long int lrint (double x)
+long int lrintf (float x)
+long int lrintl (long double x)
+\end{minted}
+These functions are just like \tt{rint}, but they return a \tt{long int} instead of a floating-point number.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+long long int llrint (double x)
+long long int llrintf (float x)
+long long int llrintl (long double x)
+\end{minted}
+These functions are just like \tt{rint}, but they return a \tt{long long int} instead of a floating-point number.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+long int lround (double x)
+long int lroundf (float x)
+long int lroundl (long double x)
+\end{minted}
+These functions are just like \tt{round}, but they return a \tt{long int} instead of a floating-point number.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+long long int llround (double x)
+long long int llroundf (float x)
+long long int llroundl (long double x)
+\end{minted}
+These functions are just like \tt{round}, but they return a \tt{long long int} instead of a floating-point number.
+
+\begin{minted}[fontsize=\footnotesize,framesep=0mm]{cpp}
+double modf (double value, double *integer-part)
+float modff (float value, float *integer-part)
+long double modfl (long double value, long double *integer-part)
+\end{minted}
+These functions break the argument value into an integer part and a fractional part (between $-1$ and $1$, exclusive). Their sum equals value. Each of the parts has the same sign as value, and the integer part is always rounded toward zero.
+
+\tt{modf} stores the integer part in \tt{*integer-part}, and returns the fractional part. For example, \tt{modf (2.5, \&intpart)} returns \tt{0.5} and stores \tt{2.0} into intpart.
+
+
+\section{Префикс-функция}
+
+Дана строка $s$. Требуется вычислить для неё префикс-функцию, т.~е. массив чисел $\pi$, где $\pi[i]$ определяется следующим образом: это такая наибольшая длина наибольшего собственного суффикса подстроки $s[0 \ldots i]$, совпадающего с её префиксом (собственный суффикс — значит не совпадающий со всей строкой). В частности, значение $\pi[0]$ полагается равным нулю.
+
+\begin{cppcode}
+vector<int> prefix_function(string s)
+{
+    int n = (int)s.length();
+    vector<int> pi(n);
+    for (int i = 1; i < n; ++i)
+    {
+        int j = pi[i - 1];
+        while (j > 0 && s[i] != s[j])
+            j = pi[j - 1];
+        if (s[i] == s[j]) ++j;
+        pi[i] = j;
+    }
+    return pi;
+}
+\end{cppcode}
+
+
+
+\section{Z-функция}
+
+Пусть дана строка $s$ длины $n$. Тогда Z-функция от этой строки — это массив длины $n$, $i$-й элемент которого равен наибольшему числу символов, начиная с позиции $i$, совпадающих с первыми символами строки $s$.
+
+Иными словами, $z[i]$ — это наибольший общий префикс строки $s$ и её $i$-го суффикса.
+
+\begin{cppcode}
+vector<int> z_function (string s) {
+    int n = (int) s.length();
+    vector<int> z (n);
+    for (int i=1, l=0, r=0; i<n; ++i) {
+        if (i <= r)
+            z[i] = min (r-i+1, z[i-l]);
+        while (i+z[i] < n && s[z[i]] == s[i+z[i]])
+            ++z[i];
+        if (i+z[i]-1 > r)
+            l = i,  r = i+z[i]-1;
+    }
+    return z;
+}
+\end{cppcode}
+
+\section{Нахождение всех подпалиндромов}
+
+Дана строка $s$ длины $n$. Требуется найти все такие пары $(i,\,j)$, где $i<j$, что подстрока $s[i\ldots j]$ является палиндромом. Для каждой позиции $i$ найдём значения $d_1[i]$ и $d_2[i]$, обозначающие количество палиндромов соответственно нечётной и чётной длины с центром в позиции $i$.
+
+\begin{cppcode}
+vector<int> d1 (n);
+int l=0, r=-1;
+for (int i=0; i<n; ++i) {
+    int k = (i>r ? 0 : min (d1[l+r-i], r-i)) + 1;
+    while (i+k < n && i-k >= 0 && s[i+k] == s[i-k])  ++k;
+    d1[i] = k--;
+    if (i+k > r)
+        l = i-k,  r = i+k;
+}
+vector<int> d2 (n);
+l=0, r=-1;
+for (int i=0; i<n; ++i) {
+    int k = (i>r ? 0 : min (d2[l+r-i+1], r-i+1)) + 1;
+    while (i+k-1 < n && i-k >= 0 && s[i+k-1] == s[i-k])  ++k;
+    d2[i] = --k;
+    if (i+k-1 > r)
+        l = i-k,  r = i+k-1;
+}
+\end{cppcode}
+
+\section{Декомпозиция Линдона. Алгоритм Дюваля}
+
+Строка называется простой, если она строго меньше любого своего собственного суффикса. Примеры простых строк: <<\tt{a}>>, <<\tt{b}>>, <<\tt{ab}>>, <<\tt{aab}>>, <<\tt{abb}>>, <<\tt{ababb}>>, <<\tt{abcd}>>. Можно показать, что строка является простой тогда и только тогда, когда она строго меньше всех своих нетривиальных циклических сдвигов.
+
+Далее, пусть дана строка $s$. Тогда декомпозицией Линдона строки $s$ называется её разложение $s=w_1w_2\ldots w_k$, где строки $w_i$ просты, и при этом $w_1 \ge w_2 \ge \ldots \ge w_k$. Можно показать, что для любой строки  это разложение существует и единственно.
+
+\begin{cppcode}
+string s; // входная строка
+int n = (int) s.length();
+int i=0;
+while (i < n) {
+    int j=i+1, k=i;
+    while (j < n && s[k] <= s[j]) {
+        if (s[k] < s[j])
+            k = i;
+        else
+            ++k;
+        ++j;
+    }
+    while (i <= k) {
+        cout << s.substr (i, j-k) << ' ';
+        i += j - k;
+    }
+}
+\end{cppcode}
+
+
+\section{Нахождение наименьшего циклического сдвига}
+
+Пусть дана строка $s$. Построим для строки $s+s$ декомпозицию Линдона. Найдём предпростой блок, который начинается в позиции, меньшей $n$ (т.~е. в первом экземпляре строки $s$), и заканчивается в позиции, большей или равной $n$ (т.~е. во втором экземпляре). Утверждается, что позиция начала этого блока и будет началом искомого циклического сдвига.
+
+\begin{cppcode}
+string min_cyclic_shift (string s) {
+    s += s;
+    int n = (int) s.length();
+    int i=0, ans=0;
+    while (i < n/2) {
+        ans = i;
+        int j=i+1, k=i;
+        while (j < n && s[k] <= s[j]) {
+            if (s[k] < s[j])
+                k = i;
+            else
+                ++k;
+            ++j;
+        }
+        while (i <= k)  i += j - k;
+    }
+    return s.substr (ans, n/2);
+}
+\end{cppcode}
+
+
+\section{Решето Эратосфена с линейным временем работы}
+
+Наша цель — посчитать для каждого числа $i$ в отрезке $[2,\,n]$ его минимальный простой делитель $lp[i]$. Кроме того, нам потребуется хранить список всех найденных простых чисел — назовём его массивом $pr$.
+
+\begin{cppcode}
+const int N = 10000000;
+int lp[N+1];
+vector<int> pr;
+ 
+for (int i=2; i<=N; ++i) {
+    if (lp[i] == 0) {
+        lp[i] = i;
+        pr.push_back (i);
+    }
+    for (int j=0; j<(int)pr.size() && pr[j]<=lp[i] && i*pr[j]<=N; ++j)
+        lp[i * pr[j]] = pr[j];
+}
+\end{cppcode}
+
+\section{Расширенный алгоритм Евклида}
+
+\begin{cppcode}
+int gcd (int a, int b, int & x, int & y) {
+    if (a == 0) {
+        x = 0; y = 1;
+        return b;
+    }
+    int x1, y1;
+    int d = gcd (b%a, a, x1, y1);
+    x = y1 - (b / a) * x1;
+    y = x1;
+    return d;
+}
+\end{cppcode}
+
+\section{Китайская теорема об остатках}
+\begin{equation*}
+\left\{
+\begin{array}{l}
+x \equiv a_1\pmod{p_1},\\
+\ldots,\\
+x \equiv a_k\pmod{p_k},\\
+\end{array}\right.
+\end{equation*}
+$r_{ij} = (p_i)^{-1}\pmod{p_j}.$
+\begin{cppcode}
+for (int i=0; i<k; ++i) {
+    x[i] = a[i];
+    for (int j=0; j<i; ++j) {
+        x[i] = r[j][i] * (x[i] - x[j]);
+ 
+        x[i] = x[i] % p[i];
+        if (x[i] < 0)  x[i] += p[i];
+    }
+}
+\end{cppcode}
+$a = x_1 + x_2 \cdot p_1 + x_3 \cdot p_1 \cdot p_2 + \ldots + x_k \cdot p_1 \cdot \ldots \cdot p_{k-1}.$
+
+
+\section{Дискретное логарифмирование}
+
+Задача дискретного логарифмирования заключается в том, чтобы по данным целым $a$, $b$, $m$ решить уравнение $a^x = b\pmod{m}$, где $a$ и $m$ взаимно просты.
+
+\begin{cppcode}
+int solve (int a, int b, int m) {
+    int n = (int) sqrt (m + .0) + 1;
+ 
+    int an = 1;
+    for (int i=0; i<n; ++i)
+        an = (an * a) % m;
+ 
+    map<int,int> vals;
+    for (int i=1, cur=an; i<=n; ++i) {
+        if (!vals.count(cur))
+            vals[cur] = i;
+        cur = (cur * an) % m;
+    }
+ 
+    for (int i=0, cur=b; i<=n; ++i) {
+        if (vals.count(cur)) {
+            int ans = vals[cur] * n - i;
+            if (ans < m)
+                return ans;
+        }
+        cur = (cur * a) % m;
+    }
+    return -1;
+}
+\end{cppcode}
+
+\section{Дискретное извлечение корня}
+$x^k \equiv a\pmod{n}$ ($n$ простое, $a \neq 0$)
+
+Пусть $g$~--- первообразный корень по модулю $n$. Задача примет вид $(g^k)^y \equiv a \pmod{n}$. Эту задачу можно решить алгоритмом baby-step-giant-step Шэнкса. Найдём одно решение $y_0$. Все решения получаются по формуле $x = g^{y_0 + i \frac{\varphi(n)}{\gcd(k, \varphi(n))}} \pmod{n}$, $i \in \mathbb{Z}$.
+\begin{cppcode}
+int powmod (int a, int b, int p) {
+    int res = 1;
+    while (b)
+        if (b & 1)
+            res = int (res * 1ll * a % p),  --b;
+        else
+            a = int (a * 1ll * a % p),  b >>= 1;
+    return res;
+}
+ 
+int generator (int p) {
+    vector<int> fact;
+    int phi = p-1,  n = phi;
+    for (int i=2; i*i<=n; ++i)
+        if (n % i == 0) {
+            fact.push_back (i);
+            while (n % i == 0)
+                n /= i;
+        }
+    if (n > 1)
+        fact.push_back (n);
+ 
+    for (int res=2; res<=p; ++res) {
+        bool ok = true;
+        for (size_t i=0; i<fact.size() && ok; ++i)
+            ok &= powmod (res, phi / fact[i], p) != 1;
+        if (ok)  return res;
+    }
+    return -1;
+}
+ 
+int main() {
+ 
+    int n, k, a;
+    cin >> n >> k >> a;
+    if (a == 0) {
+        puts ("1\n0");
+        return 0;
+    }
+ 
+    int g = generator (n);
+ 
+    int sq = (int) sqrt (n + .0) + 1;
+    vector < pair<int,int> > dec (sq);
+    for (int i=1; i<=sq; ++i)
+        dec[i-1] = make_pair (powmod (g, int (i * sq * 1ll * k % (n - 1)), n), i);
+    sort (dec.begin(), dec.end());
+    int any_ans = -1;
+    for (int i=0; i<sq; ++i) {
+        int my = int (powmod (g, int (i * 1ll * k % (n - 1)), n) * 1ll * a % n);
+        vector < pair<int,int> >::iterator it =
+            lower_bound (dec.begin(), dec.end(), make_pair (my, 0));
+        if (it != dec.end() && it->first == my) {
+            any_ans = it->second * sq - i;
+            break;
+        }
+    }
+    if (any_ans == -1) {
+        puts ("0");
+        return 0;
+    }
+ 
+    int delta = (n-1) / gcd (k, n-1);
+    vector<int> ans;
+    for (int cur=any_ans%delta; cur<n-1; cur+=delta)
+        ans.push_back (powmod (g, cur, n));
+    sort (ans.begin(), ans.end());
+    printf ("%d\n", ans.size());
+    for (size_t i=0; i<ans.size(); ++i)
+        printf ("%d ", ans[i]);
+ 
+}
+\end{cppcode}
+
+\section{Тест Миллера-Рабина}
+\begin{cppcode}
+template <class T, class T2>
+bool miller_rabin (T n, T2 b)
+{
+    // сначала проверяем тривиальные случаи
+    if (n == 2)
+        return true;
+    if (n < 2 || even (n))
+        return false;
+
+    // проверяем, что n и b взаимно просты (иначе это приведет к ошибке)
+    // если они не взаимно просты, то либо n не просто, либо нужно увеличить b
+    if (b < 2)
+        b = 2;
+    for (T g; (g = gcd (n, b)) != 1; ++b)
+        if (n > g)
+            return false;
+
+    // разлагаем n-1 = q*2^p
+    T n_1 = n;
+    --n_1;
+    T p, q;
+    transform_num (n_1, p, q);
+
+    // вычисляем b^q mod n, если оно равно 1 или n-1, то n простое (или псевдопростое)
+    T rem = powmod (T(b), q, n);
+    if (rem == 1 || rem == n_1)
+        return true;
+
+    // теперь вычисляем b^2q, b^4q, ... , b^((n-1)/2)
+    // если какое-либо из них равно n-1, то n простое (или псевдопростое)
+    for (T i=1; i<p; i++)
+    {
+        mulmod (rem, rem, n);
+        if (rem == n_1)
+            return true;
+    }
+    return false;
+}
+\end{cppcode}
+
+\section{Факторизация методом Полларда-Ро}
+\begin{cppcode}
+template <class T>
+T pollard_rho (T n, unsigned iterations_count = 100000)
+{
+    T   b0 = rand() % n,
+        b1 = b0,
+        g;
+    mulmod (b1, b1, n);
+    if (++b1 == n)
+        b1 = 0;
+    g = gcd (abs (b1 - b0), n);
+    for (unsigned count=0; count<iterations_count && (g == 1 || g == n); count++)
+    {
+        mulmod (b0, b0, n);
+        if (++b0 == n)
+            b0 = 0;
+        mulmod (b1, b1, n);
+        ++b1;
+        mulmod (b1, b1, n);
+        if (++b1 == n)
+            b1 = 0;
+        g = gcd (abs (b1 - b0), n);
+    }
+    return g;
+}
+\end{cppcode}
+
+
+\section{Код Грея}
+Кодом Грея называется такая система нумерования неотрицательных чисел, когда коды двух соседних чисел отличаются ровно в одном бите.
+\begin{cppcode}
+int g (int n) {
+    return n ^ (n >> 1);
+}
+int rev_g (int g) {
+    int n = 0;
+    for (; g; g>>=1)
+        n ^= g;
+    return n;
+}
+\end{cppcode}
+
+
+\section{Перебор всех подмасок данной маски}
+Дана битовая маска $m$. Требуется эффективно перебрать все её подмаски, т.~е. такие маски $s$, в которых могут быть включены только те биты, которые были включены в маске $m$.
+\begin{cppcode}
+int s = m;
+while (s > 0) {
+    //... можно использовать s ...
+    s = (s-1) & m;
+}
+\end{cppcode}
+Подмаска, равная нулю, обработана не будет.
+
+
+\section{Быстрое преобразование Фурье}
+\begin{cppcode}
+void fft (vector<base> & a, bool invert) {
+    int n = (int) a.size();
+
+    for (int i=1, j=0; i<n; ++i) {
+        int bit = n >> 1;
+        for (; j>=bit; bit>>=1)
+            j -= bit;
+        j += bit;
+        if (i < j)
+            swap (a[i], a[j]);
+    }
+
+    for (int len=2; len<=n; len<<=1) {
+        double ang = 2*PI/len * (invert ? -1 : 1);
+        base wlen (cos(ang), sin(ang));
+        for (int i=0; i<n; i+=len) {
+            base w (1);
+            for (int j=0; j<len/2; ++j) {
+                base u = a[i+j],  v = a[i+j+len/2] * w;
+                a[i+j] = u + v;
+                a[i+j+len/2] = u - v;
+                w *= wlen;
+            }
+        }
+    }
+    if (invert)
+        for (int i=0; i<n; ++i)
+            a[i] /= n;
+}
+
+void multiply (const vector<int> & a, const vector<int> & b, vector<int> & res) {
+    vector<base> fa (a.begin(), a.end()),  fb (b.begin(), b.end());
+    size_t n = 1;
+    while (n < max (a.size(), b.size()))  n <<= 1;
+    n <<= 1;
+    fa.resize (n),  fb.resize (n);
+
+    fft (fa, false),  fft (fb, false);
+    for (size_t i=0; i<n; ++i)
+        fa[i] *= fb[i];
+    fft (fa, true);
+
+    res.resize (n);
+    for (size_t i=0; i<n; ++i)
+        res[i] = int (fa[i].real() + 0.5);
+}
+\end{cppcode}
+
+\section{Интегрирование по формуле Симпсона}
+
+\begin{equation*}
+\int\limits_{x_{2i-2}}^{x_{2i}} f(x) dx = \left( f(x_{2i-2})+4f(x_{2i-1}) + f(x_{2i})\right) \frac{h}{3}.
+\end{equation*}
+
+\begin{cppcode}
+double a, b; // входные данные
+const int N = 1000*1000; // количество шагов (уже умноженное на 2)
+double s = 0;
+double h = (b - a) / N;
+for (int i=0; i<=N; ++i) {
+    double x = a + h * i;
+    s += f(x) * ((i==0 || i==N) ? 1 : ((i&1)==0) ? 2 : 4);
+}
+s *= h / 3;
+\end{cppcode}
+
+\section{Поиск мостов}
+\begin{cppcode}
+vector<int> g[MAXN];
+bool used[MAXN];
+int timer, tin[MAXN], fup[MAXN];
+
+void dfs (int v, int p = -1) {
+    used[v] = true;
+    tin[v] = fup[v] = timer++;
+    for (size_t i=0; i<g[v].size(); ++i) {
+        int to = g[v][i];
+        if (to == p)  continue;
+        if (used[to])
+            fup[v] = min (fup[v], tin[to]);
+        else {
+            dfs (to, v);
+            fup[v] = min (fup[v], fup[to]);
+            if (fup[to] > tin[v])
+                IS_BRIDGE(v,to);
+        }
+    }
+}
+\end{cppcode}
+
+\section{Поиск точек сочленения}
+\begin{cppcode}
+void dfs (int v, int p = -1) {
+    used[v] = true;
+    tin[v] = fup[v] = timer++;
+    int children = 0;
+    for (size_t i=0; i<g[v].size(); ++i) {
+        int to = g[v][i];
+        if (to == p)  continue;
+        if (used[to])
+            fup[v] = min (fup[v], tin[to]);
+        else {
+            dfs (to, v);
+            fup[v] = min (fup[v], fup[to]);
+            if (fup[to] >= tin[v] && p != -1)
+                IS_CUTPOINT(v);
+            ++children;
+        }
+    }
+    if (p == -1 && children > 1)
+        IS_CUTPOINT(v);
+}
+\end{cppcode}
+
+
+\section{LCA (алгоритм Тарьяна)}
+\begin{cppcode}
+vector<int> g[MAXN], q[MAXN]; // граф и все запросы
+int dsu[MAXN], ancestor[MAXN];
+bool u[MAXN];
+ 
+int dsu_get (int v) {
+    return v == dsu[v] ? v : dsu[v] = dsu_get (dsu[v]);
+}
+ 
+void dsu_unite (int a, int b, int new_ancestor) {
+    a = dsu_get (a),  b = dsu_get (b);
+    if (rand() & 1)  swap (a, b);
+    dsu[a] = b,  ancestor[b] = new_ancestor;
+}
+ 
+void dfs (int v) {
+    dsu[v] = v,  ancestor[v] = v;
+    u[v] = true;
+    for (size_t i=0; i<g[v].size(); ++i)
+        if (!u[g[v][i]]) {
+            dfs (g[v][i]);
+            dsu_unite (v, g[v][i], v);
+        }
+    for (size_t i=0; i<q[v].size(); ++i)
+        if (u[q[v][i]]) {
+            printf ("%d %d -> %d\n", v+1, q[v][i]+1,
+                ancestor[ dsu_get(q[v][i]) ]+1);
+}
+ 
+int main() {
+    //... чтение графа ...
+ 
+    // чтение запросов
+    for (;;) {
+        int a, b = ...; // очередной запрос
+        --a, --b;
+        q[a].push_back (b);
+        q[b].push_back (a);
+    }
+ 
+    // обход в глубину и ответ на запросы
+    dfs (0);
+}
+\end{cppcode}
+
+\section{LCA (метод двоичного подъёма)}
+\begin{cppcode}
+int n, l;
+vector < vector<int> > g;
+vector<int> tin, tout;
+int timer;
+vector < vector<int> > up;
+
+void dfs (int v, int p = 0) {
+    tin[v] = ++timer;
+    up[v][0] = p;
+    for (int i=1; i<=l; ++i)
+        up[v][i] = up[up[v][i-1]][i-1];
+    for (size_t i=0; i<g[v].size(); ++i) {
+        int to = g[v][i];
+        if (to != p)
+            dfs (to, v);
+    }
+    tout[v] = ++timer;
+}
+
+bool upper (int a, int b) {
+    return tin[a] <= tin[b] && tout[a] >= tout[b];
+}
+
+int lca (int a, int b) {
+    if (upper (a, b))  return a;
+    if (upper (b, a))  return b;
+    for (int i=l; i>=0; --i)
+        if (! upper (up[a][i], b))
+            a = up[a][i];
+    return up[a][0];
+}
+
+int main() {
+    //... чтение n и g ...
+    tin.resize (n),  tout.resize (n),  up.resize (n);
+    l = 1;
+    while ((1<<l) <= n)  ++l;
+    for (int i=0; i<n; ++i)  up[i].resize (l+1);
+    dfs (0);
+
+    for (;;) {
+        int a, b; // текущий запрос
+        int res = lca (a, b); // ответ на запрос
+    }
+
+}
+\end{cppcode}
+
+\section{Алгоритм Эдмондса}
+\begin{cppcode}
+int n;
+vector<int> g[MAXN];
+int match[MAXN], p[MAXN], base[MAXN], q[MAXN];
+bool used[MAXN], blossom[MAXN];
+int lca (int a, int b) {
+    bool used[MAXN] = { 0 };
+    for (;;) {
+        a = base[a];
+        used[a] = true;
+        if (match[a] == -1)  break; // дошли до корня
+        a = p[match[a]];
+    }
+    for (;;) {
+        b = base[b];
+        if (used[b])  return b;
+        b = p[match[b]];
+    }
+}
+void mark_path (int v, int b, int children) {
+    while (base[v] != b) {
+        blossom[base[v]] = blossom[base[match[v]]] = true;
+        p[v] = children;
+        children = match[v];
+        v = p[match[v]];
+    }
+}
+int find_path (int root) {
+    memset (used, 0, sizeof used);
+    memset (p, -1, sizeof p);
+    for (int i=0; i<n; ++i)
+        base[i] = i;
+ 
+    used[root] = true;
+    int qh=0, qt=0;
+    q[qt++] = root;
+    while (qh < qt) {
+        int v = q[qh++];
+        for (size_t i=0; i<g[v].size(); ++i) {
+            int to = g[v][i];
+            if (base[v] == base[to] || match[v] == to)  continue;
+            if (to == root || match[to] != -1 && p[match[to]] != -1) {
+                int curbase = lca (v, to);
+                memset (blossom, 0, sizeof blossom);
+                mark_path (v, curbase, to);
+                mark_path (to, curbase, v);
+                for (int i=0; i<n; ++i)
+                    if (blossom[base[i]]) {
+                        base[i] = curbase;
+                        if (!used[i]) {
+                            used[i] = true;
+                            q[qt++] = i;
+                        }
+                    }
+            }
+            else if (p[to] == -1) {
+                p[to] = v;
+                if (match[to] == -1)
+                    return to;
+                to = match[to];
+                used[to] = true;
+                q[qt++] = to;
+            }
+        }
+    }
+    return -1;
+}
+int main() {
+    //... чтение графа ...
+    memset (match, -1, sizeof match);
+    for (int i=0; i<n; ++i)
+        if (match[i] == -1) {
+            int v = find_path (i);
+            while (v != -1) {
+                int pv = p[v],  ppv = match[pv];
+                match[v] = pv,  match[pv] = v;
+                v = ppv;
+            }
+        }
+}
+\end{cppcode}
+
+\section{Нахождение минимального разреза}
+\begin{cppcode}
+int n, g[MAXN][MAXN];
+int best_cost = 1000000000;
+vector<int> best_cut;
+ void mincut() {
+    vector<int> v[MAXN];
+    for (int i=0; i<n; ++i)
+        v[i].assign (1, i);
+    int w[MAXN];
+    bool exist[MAXN], in_a[MAXN];
+    memset (exist, true, sizeof exist);
+    for (int ph=0; ph<n-1; ++ph) {
+        memset (in_a, false, sizeof in_a);
+        memset (w, 0, sizeof w);
+        for (int it=0, prev; it<n-ph; ++it) {
+            int sel = -1;
+            for (int i=0; i<n; ++i)
+                if (exist[i] && !in_a[i] && (sel == -1 || w[i] > w[sel]))
+                    sel = i;
+            if (it == n-ph-1) {
+                if (w[sel] < best_cost)
+                    best_cost = w[sel],  best_cut = v[sel];
+                v[prev].insert (v[prev].end(), v[sel].begin(), v[sel].end());
+                for (int i=0; i<n; ++i)
+                    g[prev][i] = g[i][prev] += g[sel][i];
+                exist[sel] = false;
+            }
+            else {
+                in_a[sel] = true;
+                for (int i=0; i<n; ++i)
+                    w[i] += g[sel][i];
+                prev = sel;
+            }
+        }
+    }
+}
+\end{cppcode}
+
+
+\section{Задача Джонсона с двумя станками}
+
+Имеется $n$ деталей и два станка. Каждая деталь должна сначала пройти обработку на первом станке, затем — на втором. При этом $i$-я деталь обрабатывается на первом станке за $a_i$ времени, а на втором — за $b_i$ времени. Каждый станок в каждый момент времени может работать только с одной деталью. Требуется составить такой порядок подачи деталей на станки, чтобы итоговое время обработки всех деталей было бы минимальным.
+
+Для решения задачи нужно отсортировать детали по минимуму из $(a_i,\,b_i)$, и если у текущей детали минимум равен $a_i$, то эту деталь надо обработать первой из оставшихся, иначе — последней из оставшихся.
+
+\begin{cppcode}
+struct item {
+    int a, b, id;
+ 
+    bool operator< (item p) const {
+        return min(a,b) < min(p.a,p.b);
+    }
+};
+ 
+ 
+sort (v.begin(), v.end());
+vector<item> a, b;
+for (int i=0; i<n; ++i)
+    (v[i].a<=v[i].b ? a : b) .push_back (v[i]);
+a.insert (a.end(), b.rbegin(), b.rend());
+ 
+int t1=0, t2=0;
+for (int i=0; i<n; ++i) {
+    t1 += a[i].a;
+    t2 = max(t2,t1) + a[i].b;
+}
+\end{cppcode}
+
+
+\section{Декартово дерево}
+\begin{cppcode}
+struct item {
+    int key, prior;
+    item * l, * r;
+    item() { }
+    item (int key, int prior) : key(key), prior(prior), l(NULL), r(NULL) { }
+};
+typedef item * pitem;
+
+void split (pitem t, int key, pitem & l, pitem & r) {
+    if (!t)
+        l = r = NULL;
+    else if (key < t->key)
+        split (t->l, key, l, t->l),  r = t;
+    else
+        split (t->r, key, t->r, r),  l = t;
+}
+
+void insert (pitem & t, pitem it) {
+    if (!t)
+        t = it;
+    else if (it->prior > t->prior)
+        split (t, it->key, it->l, it->r),  t = it;
+    else
+        insert (it->key < t->key ? t->l : t->r, it);
+}
+
+void merge (pitem & t, pitem l, pitem r) {
+    if (!l || !r)
+        t = l ? l : r;
+    else if (l->prior > r->prior)
+        merge (l->r, l->r, r),  t = l;
+    else
+        merge (r->l, l, r->l),  t = r;
+}
+
+void erase (pitem & t, int key) {
+    if (t->key == key)
+        merge (t, t->l, t->r);
+    else
+        erase (key < t->key ? t->l : t->r, key);
+}
+
+pitem unite (pitem l, pitem r) {
+    if (!l || !r)  return l ? l : r;
+    if (l->prior < r->prior)  swap (l, r);
+    pitem lt, rt;
+    split (r, l->key, lt, rt);
+    l->l = unite (l->l, lt);
+    l->r = unite (l->r, rt);
+    return l;
+}
+\end{cppcode}
+
+\section{Неявное декартово дерево}
+\begin{cppcode}
+typedef struct item * pitem;
+struct item {
+    int prior, value, cnt;
+    bool rev;
+    pitem l, r;
+};
+
+int cnt (pitem it) {
+    return it ? it->cnt : 0;
+}
+
+void upd_cnt (pitem it) {
+    if (it)
+        it->cnt = cnt(it->l) + cnt(it->r) + 1;
+}
+
+void push (pitem it) {
+    if (it && it->rev) {
+        it->rev = false;
+        swap (it->l, it->r);
+        if (it->l)  it->l->rev ^= true;
+        if (it->r)  it->r->rev ^= true;
+    }
+}
+
+void merge (pitem & t, pitem l, pitem r) {
+    push (l);
+    push (r);
+    if (!l || !r)
+        t = l ? l : r;
+    else if (l->prior > r->prior)
+        merge (l->r, l->r, r),  t = l;
+    else
+        merge (r->l, l, r->l),  t = r;
+    upd_cnt (t);
+}
+
+void split (pitem t, pitem & l, pitem & r, int key, int add = 0) {
+    if (!t)
+        return void( l = r = 0 );
+    push (t);
+    int cur_key = add + cnt(t->l);
+    if (key <= cur_key)
+        split (t->l, l, t->l, key, add),  r = t;
+    else
+        split (t->r, t->r, r, key, add + 1 + cnt(t->l)),  l = t;
+    upd_cnt (t);
+}
+
+void reverse (pitem t, int l, int r) {
+    pitem t1, t2, t3;
+    split (t, t1, t2, l);
+    split (t2, t2, t3, r-l+1);
+    t2->rev ^= true;
+    merge (t, t1, t2);
+    merge (t, t, t3);
+}
+
+void output (pitem t) {
+    if (!t)  return;
+    push (t);
+    output (t->l);
+    printf ("%d ", t->value);
+    output (t->r);
+}
+\end{cppcode}
+
+\section{Система непересекающихся множеств}
+\begin{cppcode}
+void make_set (int v) {
+    parent[v] = v;
+    rank[v] = 0;
+}
+int find_set (int v) {
+    if (v == parent[v])
+        return v;
+    return parent[v] = find_set (parent[v]);
+}
+void union_sets (int a, int b) {
+    a = find_set (a);
+    b = find_set (b);
+    if (a != b) {
+        if (rank[a] < rank[b])
+            swap (a, b);
+        parent[b] = a;
+        if (rank[a] == rank[b])
+            ++rank[a];
+    }
+}
+\end{cppcode}
+
+\section{Дерево отрезков}
+\begin{cppcode}
+void modify(int i, int v)
+{
+    for (i += m; i != 0; i >>= 1)
+        a[i] += v;
+}
+
+int findsum(int i, int j)
+{
+    int ret = 0;
+    for (i += m - 1, j += m + 1; j - i > 1; i >>= 1, j >>= 1)
+    {
+        if (!(i & 1))
+            ret += a[i + 1];
+        if (j & 1)
+            ret += a[j - 1];
+    }
+    return ret;
+}
+\end{cppcode}
+
+
+\section{Пересечение полуплоскостей}
+\begin{cppcode}
+const int MAX_N = 50010;
+const LD INF = 1e18;
+const LD EPS = 1e-8;
+struct Vec {
+    LD x, y;
+    Vec(LD x_ = 0, LD y_ = 0)
+        : x(x_), y(y_)
+    {
+    }
+    Vec operator + (Vec o) {
+        return Vec(x + o.x, y + o.y);
+    }
+    Vec operator - (Vec o) {
+        return Vec(x - o.x, y - o.y);
+    }
+    LD operator * (Vec o) {
+        return x * o.x + y * o.y;
+    }
+    LD operator % (Vec o) {
+        return x * o.y - o.x * y;
+    }
+    Vec operator * (LD s) {
+        return Vec(s * x, s * y);
+    }
+    LD norm() {
+        return sqrt(x * x + y * y);
+    }
+    Vec ort() {
+        return (*this) * (1 / norm());
+    }
+};
+ostream& operator << (ostream& ostr, Vec v) {
+    ostr << '(' << v.x << ' ' << v.y << ')';
+    return ostr;
+}
+
+struct Border {
+    Vec r, v;
+    LD s, f;
+    Border(Vec r1, Vec r2)
+        : r(r1), v((r2 - r1).ort()), s(-INF), f(INF)
+    {
+    }
+    bool ok(Vec p) {
+        return v % (p - r) > -EPS;
+    }
+};
+ostream& operator << (ostream& ostr, Border b) {
+    ostr << b.r + b.v * b.s << ' ' << b.r + b.v * b.f;
+    return ostr;
+}
+
+LD det(LD a, LD b, LD c, LD d) {
+    return a * d - b * c;
+}
+bool intersect(Border a, Border b, LD& t1, LD& t2) {
+    LD d = det(a.v.x, -b.v.x, a.v.y, -b.v.y);
+    LD dx = det(b.r.x - a.r.x, -b.v.x, b.r.y - a.r.y, -b.v.y);
+    LD dy = det(a.v.x, b.r.x - a.r.x, a.v.y, b.r.y - a.r.y);
+    if (fabs(d) < EPS)
+        return false;
+    t1 = dx / d;
+    t2 = dy / d;
+#ifdef DEBUG
+    cerr << "t1 " << t1 << ' ' << " t2 " << t2 << '\n';
+#endif
+    return true;
+}
+
+int n;
+Vec ps [MAX_N];
+void print(deque<Border>& bs) {
+    cerr << "print\n";
+    for (size_t i = 0; i < bs.size(); i++)
+        cerr << "border: r = " << bs[i].r << " v = " << bs[i].v <<
+        " starts at " << bs[i].s << " and finishes at " << bs[i].f << '\n';
+}
+bool nonEmpty(vector<Border>& bs) {
+    deque<Border> deq(1, bs[0]);
+    for (size_t i = 1; !deq.empty() && i < bs.size(); i++) {
+#ifdef DEBUG
+        print(deq);
+#endif
+        bool add = false;
+        Border& a = bs[i];
+        LD t1, t2;
+
+        while (!deq.empty()) {
+            Border& b = deq.back();
+            if (intersect(a, b, t1, t2)) {
+                if (t2 - b.f > -EPS)
+                    break;
+                if (t2 - b.s > -EPS) {
+                    b.f = t2;
+                    a.s = t1;
+                    add = true;
+                    if (fabs(b.f - b.s) < EPS)
+                        deq.pop_back();
+                    break;
+                }
+            }
+            else if (a.ok(b.r))
+                break;
+            deq.pop_back();
+        }
+        while (!deq.empty() && deq.front().v % a.v < EPS) {
+            Border& b = deq.front();
+            if (intersect(a, b, t1, t2)) {
+                if (t2 - b.s < EPS)
+                    break;
+                if (t2 - b.f < EPS) {
+                    b.s = t2;
+                    a.f = t1;
+                    if (fabs(b.f - b.s) < EPS)
+                        deq.pop_front();
+                    break;
+                }
+            }
+            else if (a.ok(b.r))
+                break;
+            deq.pop_front();
+        }
+        if (add && fabs(a.f - a.s) > EPS)
+            deq.push_back(a);
+    }
+    bool ret = false;
+    for (int i = 0; i + 1 < deq.size(); i++)
+        if (fabs(deq[i].v % deq[i + 1].v) > EPS)
+            ret = true;
+#ifdef DEBUG
+    print(deq);
+    cerr << "DONE\n";
+    for (size_t i = 0; i < deq.size(); i++)
+        cout << deq[i] << '\n';
+#endif
+    return ret;
+}
+bool can(int d) {
+    vector<Border> bs;
+    for (int i = 0; i < n; i++)
+        bs.push_back(Border(ps[i], ps[(i + d + 1) % n]));
+    return nonEmpty(bs);
+}
+void test1() {
+    vector<Border> bs;
+    bs.push_back(Border(Vec(0, 0), Vec(1, 0)));
+    bs.push_back(Border(Vec(1, 0), Vec(1, 1)));
+    bs.push_back(Border(Vec(1, 1), Vec(0, 0)));
+    assert(nonEmpty(bs));
+}
+void test2() {
+    vector<Border> bs;
+    bs.push_back(Border(Vec(0, 0), Vec(1, 0)));
+    bs.push_back(Border(Vec(1, 1), Vec(0, 1)));
+    assert(nonEmpty(bs));
+}
+void test3() {
+    vector<Border> bs;
+    bs.push_back(Border(Vec(0, 0), Vec(1, 0)));
+    bs.push_back(Border(Vec(0, 0), Vec(1, 1)));
+    bs.push_back(Border(Vec(1, 0), Vec(1, 1)));
+    assert(nonEmpty(bs));
+}
+void test4() {
+    vector<Border> bs;
+    bs.push_back(Border(Vec(1, 0), Vec(0, 0)));
+    bs.push_back(Border(Vec(1, 1), Vec(1, 0)));
+    bs.push_back(Border(Vec(0, 0), Vec(1, 1)));
+    assert(!nonEmpty(bs));
+}
+void test5() {
+    vector<Border> bs;
+    bs.push_back(Border(Vec(-10, 0), Vec(10, 0)));
+    bs.push_back(Border(Vec(10, -10), Vec(10, 10)));
+    bs.push_back(Border(Vec(10, 10), Vec(-20, 10)));
+    bs.push_back(Border(Vec(0, 30), Vec(0, -30)));
+    assert(nonEmpty(bs));
+}
+int main() {
+    /*test1();
+    test2();
+    test3();
+    test4();
+    test5();
+    return 0;*/
+
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+        int xx, yy;
+        scanf("%d%d", &xx, &yy);
+        ps[i].x = xx;
+        ps[i].y = yy;
+    }
+    reverse(ps, ps + n);
+   
+    int left = 0, right = n - 2;
+    while (left != right) {
+        int middle = (left + right) / 2;
+        if (can(middle))
+            left = middle + 1;
+        else
+            right = middle;
+    }
+
+    cout << left << '\n';
+    return 0;
+}
+\end{cppcode}
+
+\end{document}
